@@ -7,10 +7,24 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<!-- write the code to read application number, and send it to admincontrollers
-	     callemi method to calculate the emi and other details also provide links
-	     to logout and admin home page
-	-->
-
+<jsp:include page="header.jsp"/>
+	<h2 align="center" style="color: blue;">Loan Process</h2>
+	<div>
+	<h4 style="color: blue">Next steps for loan <%=request.getParameter("loan") %></h4>
+	<ul style="list-style-type:none;">
+	<li>
+	<input type="radio" id="accept" name="loanProcess" value="accept">
+	<label for="Accept">Accept</label><br>
+	<input type="radio" id="reject" name="loanProcess" value="Reject">
+	<label for="Reject">Reject</label><br>
+	<input type="radio" id="cancel" name="loanProcess" value="Cancel">
+	<label for="Cancel">InProgress</label>
+	</li>
+	</ul>
+	<input type="button" value="Cancel"></input>
+	<input type="submit" action="#" value="Submit"></input>
+	</div>
+	
+	<jsp:include page="footer.jsp"/>
 </body>
 </html>

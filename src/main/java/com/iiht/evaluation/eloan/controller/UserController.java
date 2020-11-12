@@ -18,7 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.iiht.evaluation.eloan.dao.ConnectionDao;
+import com.iiht.evaluation.eloan.model.LoanInfo;
 import com.mysql.cj.util.StringUtils;
+
 
 
 
@@ -177,7 +179,7 @@ private ConnectionDao connDao;
 			
 			String sqlquery = "insert into loan_info (userId, loan_name, loan_application_num, loan_amount_requested, "
 					+ "loan_application_date, term_of_loan, payment_start_date, business_structure, billing_indicator,"
-					+ " tax_indicator, address, mobile, email,status) values('"+userId+"','"+loanName+"','"+loanApplNum+"','"+loanAmontRequested
+					+ " tax_indicator, address, mobile, email, status) values('"+userId+"','"+loanName+"','"+loanApplNum+"','"+loanAmontRequested
 					+ "','"+applicationDate+"','"+termOfLoan+"','"+payStartDate+"','"+businessStructure+"','"+billingIndicator+"','"+taxIndicator
 					+"','"+userAddress+"','"+mobile+"','"+email+"','Pending Approval')";
 		     		System.out.println(sqlquery);
@@ -308,11 +310,21 @@ private ConnectionDao connDao;
 		return null;
 	}
 
-	private String trackloan(HttpServletRequest request, HttpServletResponse response) {
+	private String trackloan(HttpServletRequest request, HttpServletResponse response) throws SQLException {
 		// TODO Auto-generated method stub
 	/* write a code to return to trackloan page */
-		
-		return null;
+		String status = null;
+		String viewPage = null;
+		String trackApplNum = request.getParameter("trackApplNum");
+		LoanInfo loanInfo = getLoanInfo(trackApplNum);
+		 if(loanInfo != null && !StringUtils.isNullOrEmpty(loanInfo.getStatus())) { 
+			  viewPage="trackloan.jsp?loanStatusMessage= Your Loan Application "+trackApplNum+
+					  " current status is :"+loanInfo.getStatus();
+		    } else { 
+		    	 viewPage="trackloan.jsp?loanStatusMessage= Loan Application number "+trackApplNum+
+		    			 " doesnt exist. Please provide valid Loan Application Number";
+		    }
+		return viewPage;
 	}
 
 	private String application(HttpServletRequest request, HttpServletResponse response) {
@@ -363,4 +375,56 @@ private ConnectionDao connDao;
 		return userId;
 	}
 
+	private LoanInfo getLoanInfo (String trackApplNum) throws SQLException {
+		
+		Connection connection = null;
+		LoanInfo loanInfo =null;
+		
+		try {
+			
+			String dbURL="jdbc:mysql://localhost:3306/ebank";
+			String dbUserName="srivalli";
+			String dbPassword="1234";
+			connection = new ConnectionDao(dbURL,dbUserName,dbPassword).connect();
+			
+			String validatUserQuery = "select * from loan_info where loan_application_num='"+trackApplNum+"'";
+			System.out.println(validatUserQuery);
+			
+		    PreparedStatement pst = connection.prepareStatement(validatUserQuery);	
+		    ResultSet rs= pst.executeQuery();
+		    loanInfo = new LoanInfo(); 
+	  
+	        while (rs.next()) { 
+	            loanInfo.setLoanId(rs.getLong("loan_id")); 
+	            loanInfo.setUserId(rs.getLong("userId")); 
+	            loanInfo.setLoanName(rs.getString("loan_name")); 
+	            loanInfo.setAmtrequest(rs.getLong("loan_amount_requested"));
+	            loanInfo.setDoa(rs.getString("loan_application_date"));
+	            loanInfo.setTermOfLoan(rs.getString("term_of_loan"));
+	            loanInfo.setPaymentStartDate(rs.getString("payment_start_date"));
+	            loanInfo.setBstructure(rs.getString("business_structure"));
+	            loanInfo.setBindicator(rs.getString("billing_indicator"));
+	            loanInfo.setTaxIndicator(rs.getString("tax_indicator"));
+	            loanInfo.setAddress(rs.getString("address"));
+	            loanInfo.setMobile(rs.getString("mobile"));
+	            loanInfo.setEmail(rs.getString("email"));
+	            loanInfo.setStatus(rs.getString("status"));
+	        } 
+	  
+			pst.close();
+			connection.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally{
+			try {
+				if(connection != null) {
+					connection.close();
+				}
+			}catch(SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return loanInfo;
+	}
 }
