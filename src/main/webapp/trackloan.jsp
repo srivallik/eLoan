@@ -3,27 +3,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-h1 {
-  text-align: center;
-}
-</style>
 <meta charset="ISO-8859-1">
-<title>Track Loan Status</title>
+<title>Track Loan</title>
 </head>
 <body>
-<h1>Track Loan Application Status</h1>
-<br/>
-<label for="Loan Application Number">Enter Loan Application Number</label><br>
-<input type="text" name="Loan Application Number"/>
-<br/>
-<div>
-	<div><input type="submit" value="Submit"> </div>
-</div>
 
-	<!-- write html code to read the application number and send to usercontrollers'
+<h1>Loan Application Form</h1>
+<!-- write html code to read the application number and send to usercontrollers'
              displaystatus method for displaying the information
 	-->
+<br/>
+	
 
+<form action="/ELoan_App/user"  method="GET">
+<table border="0px;">
+    <tr>
+       <td style="width: 50%;align:left" ><labe>Loan Application Number</td>
+       <td style="width: 50%;align:left"><input name="trackApplNum" id="trackApplNum" type="text"></input></td>
+    </tr>
+     <br/>
+	<tr>
+	<td style="width: 50%;align:left"><a href="userhome.jsp">Back to User DashBoard</a> </td>
+	<td style="width: 50%;align:left">
+	   		<div>
+	    		<div><button name="action" type="action" value="trackloan" type="submit">Submit</button></div>
+       		<div> 
+       </td>
+	</tr>
+	<br/>
+	<tr><td colspan="2" style="color:#008000;"><h4><%=(request.getParameter("loanStatusMessage") != null)?request.getParameter("loanStatusMessage"):"" %></h4></td></tr>
+</table>
+</form>
 </body>
 </html>

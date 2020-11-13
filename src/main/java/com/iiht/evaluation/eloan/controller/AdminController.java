@@ -93,7 +93,7 @@ public class AdminController extends HttpServlet {
 	private String process(HttpServletRequest request, HttpServletResponse response) throws SQLException {
 		// TODO Auto-generated method stub
 	/* return to process page */
-		return  null;
+		return "process.jsp";
 	}
 	private String adminLogout(HttpServletRequest request, HttpServletResponse response) {
 		// TODO Auto-generated method stub
@@ -102,9 +102,19 @@ public class AdminController extends HttpServlet {
 	}
 
 	private String listall(HttpServletRequest request, HttpServletResponse response) throws SQLException {
-	/* write the code to display all the loans */
+		Connection connection = this.connDao.connect();
+		String query = "select loan_name, loan_application_num, status from loan_info";
+		System.out.println(query);
+		List<String> loanList = new ArrayList<>();
+	    PreparedStatement pst = connection.prepareStatement(query);	
+	    ResultSet rs= pst.executeQuery();
 		
-		return null;
+		  while(rs.next()) {
+			  String laonName=rs.getString(1);
+			  loanList.add(laonName);
+		  }
+		request.setAttribute("loanList", loanList);
+		return "listall.jsp";
 	}
 
 	
